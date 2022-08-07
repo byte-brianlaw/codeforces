@@ -24,31 +24,26 @@ auto solve() {
     inputPaper(black_1);
     inputPaper(black_2);
 
-    const auto calculateCover = [&](Paper& paper) {
+    const auto calculateCover = [&](const Paper& paper) {
         return (
             max(min(paper[1][0], white[1][0]) - max(paper[0][0], white[0][0]), 0ll) *
             max(min(paper[1][1], white[1][1]) - max(paper[0][1], white[0][1]), 0ll)
         );
     };
-
-    if (
-        (
-            calculateCover(black_1) + calculateCover(black_2) -
+    const auto calculateIntersection = [&](int dimension) {
+        return max(
             (
-                max(
-                    (
-                        min({black_1[1][0], black_2[1][0], white[1][0]}) -
-                        max({black_1[0][0], black_2[0][0], white[0][0]})
-                    ), 0ll
-                ) * max(
-                    (
-                        min({black_1[1][1], black_2[1][1], white[1][1]}) -
-                        max({black_1[0][1], black_2[0][1], white[0][1]})
-                    ), 0ll
-                )
-            )
-        ) == (white[1][0] - white[0][0]) * (white[1][1] - white[0][1])
-    ) {
+                min({black_1[1][dimension], black_2[1][dimension], white[1][dimension]}) -
+                max({black_1[0][dimension], black_2[0][dimension], white[0][dimension]})
+            ), 0ll
+        );
+    };
+    const auto covered = (
+        calculateCover(black_1) + calculateCover(black_2) -
+        (calculateIntersection(0) * calculateIntersection(1))
+    );
+
+    if (covered == (white[1][0] - white[0][0]) * (white[1][1] - white[0][1])) {
         cout << "NO";
     } else {
         cout << "YES";
