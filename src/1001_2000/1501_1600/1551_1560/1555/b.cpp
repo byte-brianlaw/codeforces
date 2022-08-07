@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <ios>
 #include <iostream>
+#include <limits>
 
 using std::array;
 using std::cin;
@@ -11,6 +12,7 @@ using std::fixed;
 using std::ios_base;
 using std::max;
 using std::min;
+using std::numeric_limits;
 using std::setprecision;
 
 auto solve() {
@@ -18,29 +20,33 @@ auto solve() {
     auto room = array<int, 2>();
     auto table_1 = array<array<int, 2>, 2>();
     auto table_2 = array<int, 2>();
+    const auto inputArray = [&](array<int, 2>& array_) {
+        cin >> array_[0] >> array_[1];
+    };
 
-    cin >> room[0] >> room[1] >> table_1[0][0] >> table_1[0][1] >> table_1[1][0] >> table_1[1][1] >>
-    table_2[0] >> table_2[1];
+    inputArray(room);
+    inputArray(table_1[0]);
+    inputArray(table_1[1]);
+    inputArray(table_2);
 
-    auto distance = max(room[0], room[1]);
-
-    if (
-        table_1[1][0] - table_1[0][0] + table_2[0] > room[0] &&
-        table_1[1][1] - table_1[0][1] + table_2[1] > room[1]
-    ) {
-        distance = -1;
-    } else {
-        if (table_1[1][0] - table_1[0][0] + table_2[0] <= room[0]) {
-            distance = min(max(table_2[0] - table_1[0][0], 0), distance);
-            distance = min(max(table_2[0] - room[0] + table_1[1][0], 0), distance);
+    auto distance = numeric_limits<int>::max();
+    const auto minimizeDistance = [&](int dimension) {
+        if (table_1[1][dimension] - table_1[0][dimension] + table_2[dimension] <= room[dimension]) {
+            distance = min(
+                {
+                    table_2[dimension] - table_1[0][dimension],
+                    table_2[dimension] - room[dimension] + table_1[1][dimension], distance
+                }
+            );
         }
-        if (table_1[1][1] - table_1[0][1] + table_2[1] <= room[1]) {
-            distance = min(max(table_2[1] - table_1[0][1], 0), distance);
-            distance = min(max(table_2[1] - room[1] + table_1[1][1], 0), distance);
-        }
-    }
+    };
 
-    if (distance != -1) {
+    minimizeDistance(0);
+    minimizeDistance(1);
+
+    distance = max(distance, 0);
+
+    if (distance != numeric_limits<int>::max()) {
         cout << static_cast<double>(distance);
     } else {
         cout << -1;
