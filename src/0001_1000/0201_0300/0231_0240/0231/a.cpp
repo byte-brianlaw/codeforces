@@ -18,9 +18,7 @@ auto solve() {
         auto tonya = false;
         auto vasya = false;
         cin >> petya >> vasya >> tonya;
-        if (static_cast<int>(petya) + static_cast<int>(tonya) + static_cast<int>(vasya) >= 2) {
-            ++implement;
-        }
+        implement += petya + tonya + vasya >= 2;
     }
 
     cout << implement << '\n';
